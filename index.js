@@ -75,12 +75,16 @@ new Vue({
       msg: "hello world",
       msg2: "hello world2",
       count: 0,
+      count2: 0,
       'msg-html': "<p style='color: red'>red msg for html</p>"
     }
   },
   methods: {
     addCount() {
       this.count ++;
+    },
+    addCount2() {
+      this.count2 ++;
     }
   },
   template: `
@@ -88,12 +92,18 @@ new Vue({
     {{ msg2 }}
     <p id="test-{{}}">
       {{ msg }}
+       {{ msg2 }}
     </p>
     <p id="test-v-text" v-text="msg"></p>
     <input id="test-v-model" v-model="msg" />
+    <input v-model="msg2" />
     <p id="test-v-html" v-html="msg-html"></p>
-    <p>{{ count }}</p>
+    <p>
+      {{ count }}
+      {{ count2 }}
+    </p>
     <button id="test-v-on" v-on:click="addCount">add count</button>
+    <button v-on:click="addCount2">add count2</button>
   `
 })
 

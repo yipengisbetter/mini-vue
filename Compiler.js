@@ -93,14 +93,43 @@ class Compiler {
 
   compileText(textNode) {
     const { textContent } = textNode;
-    console.log(textContent);
-
     const { vm, data, compileTextRegexp } = this;
-    textContent.replace(compileTextRegexp, ($, $1) => {
-      console.log(textContent);
-      const key = $1.trim();
-      this.compileOptions['{{}}'](textNode, vm, data, key);
-    });
+    // textContent.replace(compileTextRegexp, ($, $1) => {
+    //   const key = $1.trim();
+    //   this.compileOptions['{{}}'](textNode, vm, data, key);
+    // });
+    let started = false;
+    let startI = 0;
+    let endI = 0;
+    let lastI = 0;
+    let idx = -1;
+    const arr = [];
+    for(let i = 0; i < textContent.length; i++) {
+      const iContent = textContent[i];
+      const iiContent = textContent[i + 1];
+
+      if (!started && iContent === '{' && iiContent === '{') {
+        started = true;
+        startI = i;
+      }
+
+      if (started && iContent === '}' && iiContent === '}') {
+        started = false;
+        endI = i + 2;
+        arr.push(textContent.slice(lastI, startI))
+        arr.push(textContent.slice(startI, endI));
+        lastI = endI;
+
+        const curIdx = idx += 2;
+        const key = arr[curIdx].slice(2, -2).trim();
+        console.log(key);
+
+        new Watcher(vm, data, key, newValue => {
+          arr[curIdx] = newValue;
+          textNode.textContent = arr.join('');
+        });
+      }
+    }
   }
 
   createFragmentFromTemplate() {
